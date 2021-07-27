@@ -19,8 +19,15 @@ func (s Customer) GetOrder(customer models.Customer, status string) ([]models.Or
 	}
 
 	for k, o := range orders {
-		o.Detail, err = s.OrderDetail.FindByOrder(o)
+		details, err := s.OrderDetail.FindByOrder(o)
 		if err == nil {
+			temp := []*models.OrderDetail{}
+			for _, d := range details {
+				temp = append(temp, &d)
+			}
+
+			o.Detail = temp
+
 			orders[k] = o
 		}
 	}
@@ -28,13 +35,13 @@ func (s Customer) GetOrder(customer models.Customer, status string) ([]models.Or
 	return orders, err
 }
 
-func (s Customer) Get(customerId int) (models.Customer, error) {
-	return s.Repository.Find(customerId)
+func (s Customer) Get(id int) (models.Customer, error) {
+	return s.Repository.Find(id)
 }
 
-func (s Customer) Reservation(customerId int, tableNumber int) (models.Order, error) {
+func (s Customer) Reservation(id int, tableNumber int) (models.Order, error) {
 	order := models.Order{
-		CustomerID:  customerId,
+		CustomerID:  id,
 		TableNumber: tableNumber,
 		Status:      types.ORDER_PENDING,
 	}

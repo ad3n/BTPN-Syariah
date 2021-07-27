@@ -29,6 +29,7 @@ func main() {
 
 	(routes.Menu{}).RegisterRoutes(app)
 	(routes.Customer{}).RegisterRoutes(app)
+	(routes.Order{}).RegisterRoutes(app)
 
 	app.Listen(fmt.Sprintf(":%d", configs.Env.AppPort))
 }

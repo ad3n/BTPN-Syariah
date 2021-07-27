@@ -92,6 +92,15 @@ func (c Customer) Reservation(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(http.StatusBadRequest)
 	}
 
+	customer, err := c.Service.Get(customerId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
 	model := models.Order{}
 	ctx.BodyParser(&model)
 
@@ -110,7 +119,7 @@ func (c Customer) Reservation(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	model, err = c.Service.Reservation(customerId, model.TableNumber)
+	model, err = c.Service.Reservation(customer.ID, model.TableNumber)
 	if err != nil {
 		ctx.JSON(map[string]string{
 			"message": err.Error(),

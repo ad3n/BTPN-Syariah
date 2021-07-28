@@ -14,12 +14,10 @@ type Customer struct {
 func (Customer) RegisterRoutes(router fiber.Router) {
 	customerRepository := repositories.Customer{Storage: configs.Db}
 	orderRepository := repositories.Order{Storage: configs.Db}
-	detailRepository := repositories.OrderDetail{Storage: configs.Db}
 
 	customerService := services.Customer{
-		Repository:  &customerRepository,
-		Order:       &orderRepository,
-		OrderDetail: &detailRepository,
+		Repository: &customerRepository,
+		Order:      &orderRepository,
 	}
 
 	customer := controllers.Customer{Service: customerService}

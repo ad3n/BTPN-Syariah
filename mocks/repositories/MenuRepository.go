@@ -12,22 +12,43 @@ type MenuRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: Id
-func (_m *MenuRepository) Find(Id int) (*models.Menu, error) {
-	ret := _m.Called(Id)
+// Find provides a mock function with given fields: id
+func (_m *MenuRepository) Find(id int) (models.Menu, error) {
+	ret := _m.Called(id)
 
-	var r0 *models.Menu
-	if rf, ok := ret.Get(0).(func(int) *models.Menu); ok {
-		r0 = rf(Id)
+	var r0 models.Menu
+	if rf, ok := ret.Get(0).(func(int) models.Menu); ok {
+		r0 = rf(id)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Menu)
-		}
+		r0 = ret.Get(0).(models.Menu)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(Id)
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindAll provides a mock function with given fields:
+func (_m *MenuRepository) FindAll() ([]models.Menu, error) {
+	ret := _m.Called()
+
+	var r0 []models.Menu
+	if rf, ok := ret.Get(0).(func() []models.Menu); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Menu)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -12,22 +12,41 @@ type CustomerRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: Id
-func (_m *CustomerRepository) Find(Id int) (*models.Customer, error) {
-	ret := _m.Called(Id)
+// Find provides a mock function with given fields: id
+func (_m *CustomerRepository) Find(id int) (models.Customer, error) {
+	ret := _m.Called(id)
 
-	var r0 *models.Customer
-	if rf, ok := ret.Get(0).(func(int) *models.Customer); ok {
-		r0 = rf(Id)
+	var r0 models.Customer
+	if rf, ok := ret.Get(0).(func(int) models.Customer); ok {
+		r0 = rf(id)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Customer)
-		}
+		r0 = ret.Get(0).(models.Customer)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(Id)
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindByPhoneNumber provides a mock function with given fields: phoneNumber
+func (_m *CustomerRepository) FindByPhoneNumber(phoneNumber string) (models.Customer, error) {
+	ret := _m.Called(phoneNumber)
+
+	var r0 models.Customer
+	if rf, ok := ret.Get(0).(func(string) models.Customer); ok {
+		r0 = rf(phoneNumber)
+	} else {
+		r0 = ret.Get(0).(models.Customer)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(phoneNumber)
 	} else {
 		r1 = ret.Error(1)
 	}

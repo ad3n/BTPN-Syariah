@@ -36,7 +36,7 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	model, err = c.Service.Save(model)
+	err = c.Service.Save(model)
 	if err != nil {
 		ctx.JSON(map[string]string{
 			"message": err.Error(),
@@ -87,7 +87,7 @@ func (c Customer) Reservation(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	model, err = c.Service.Reservation(customer.ID, model.TableNumber)
+	model, err = c.Service.Reservation(customer, model.TableNumber)
 	if err != nil {
 		ctx.JSON(map[string]string{
 			"message": err.Error(),

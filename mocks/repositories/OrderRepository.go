@@ -12,22 +12,20 @@ type OrderRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: Id
-func (_m *OrderRepository) Find(Id int) (*models.Order, error) {
-	ret := _m.Called(Id)
+// Find provides a mock function with given fields: id
+func (_m *OrderRepository) Find(id int) (models.Order, error) {
+	ret := _m.Called(id)
 
-	var r0 *models.Order
-	if rf, ok := ret.Get(0).(func(int) *models.Order); ok {
-		r0 = rf(Id)
+	var r0 models.Order
+	if rf, ok := ret.Get(0).(func(int) models.Order); ok {
+		r0 = rf(id)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Order)
-		}
+		r0 = ret.Get(0).(models.Order)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(Id)
+		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)
 	}

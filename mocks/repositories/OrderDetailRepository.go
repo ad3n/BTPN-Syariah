@@ -12,22 +12,22 @@ type OrderDetailRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: Id
-func (_m *OrderDetailRepository) Find(Id int) (*models.OrderDetail, error) {
-	ret := _m.Called(Id)
+// FindByOrder provides a mock function with given fields: order
+func (_m *OrderDetailRepository) FindByOrder(order models.Order) ([]models.OrderDetail, error) {
+	ret := _m.Called(order)
 
-	var r0 *models.OrderDetail
-	if rf, ok := ret.Get(0).(func(int) *models.OrderDetail); ok {
-		r0 = rf(Id)
+	var r0 []models.OrderDetail
+	if rf, ok := ret.Get(0).(func(models.Order) []models.OrderDetail); ok {
+		r0 = rf(order)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.OrderDetail)
+			r0 = ret.Get(0).([]models.OrderDetail)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(Id)
+	if rf, ok := ret.Get(1).(func(models.Order) error); ok {
+		r1 = rf(order)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -35,11 +35,11 @@ func (_m *OrderDetailRepository) Find(Id int) (*models.OrderDetail, error) {
 	return r0, r1
 }
 
-// Saves provides a mock function with given fields: orderDetails
-func (_m *OrderDetailRepository) Saves(orderDetails ...*models.OrderDetail) error {
-	_va := make([]interface{}, len(orderDetails))
-	for _i := range orderDetails {
-		_va[_i] = orderDetails[_i]
+// Saves provides a mock function with given fields: details
+func (_m *OrderDetailRepository) Saves(details ...*models.OrderDetail) error {
+	_va := make([]interface{}, len(details))
+	for _i := range details {
+		_va[_i] = details[_i]
 	}
 	var _ca []interface{}
 	_ca = append(_ca, _va...)
@@ -47,7 +47,7 @@ func (_m *OrderDetailRepository) Saves(orderDetails ...*models.OrderDetail) erro
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(...*models.OrderDetail) error); ok {
-		r0 = rf(orderDetails...)
+		r0 = rf(details...)
 	} else {
 		r0 = ret.Error(0)
 	}

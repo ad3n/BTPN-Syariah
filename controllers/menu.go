@@ -13,7 +13,7 @@ func (c Menu) GetAll(ctx *fiber.Ctx) error {
 	menus, err := c.Service.GetAll()
 	if err != nil {
 		ctx.JSON(map[string]string{
-			"message": err.Error(),
+			"message": "unable to get all menus",
 		})
 
 		return ctx.SendStatus(fiber.StatusInternalServerError)

@@ -6,6 +6,7 @@ ADD . /go/src/resto
 WORKDIR /go/src/resto
 
 RUN go get
+RUN go test -coverprofile /tmp/coverage ./... -v
 RUN go build -o app .
 
 EXPOSE 3000

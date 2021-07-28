@@ -36,7 +36,7 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	err = c.Service.Save(model)
+	model, err = c.Service.Save(model)
 	if err != nil {
 		ctx.JSON(map[string]string{
 			"message": err.Error(),

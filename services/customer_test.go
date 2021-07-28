@@ -78,7 +78,7 @@ func Test_Customer_Save_Phone_Number_Not_Exist(t *testing.T) {
 	repository.On("FindByPhoneNumber", customer.PhoneNumber).Return(models.Customer{}, nil).Once()
 
 	service := Customer{Repository: &repository}
-	err := service.Save(customer)
+	_, err := service.Save(customer)
 
 	repository.AssertExpectations(t)
 
@@ -96,7 +96,7 @@ func Test_Customer_Save_Phone_Number_Exist(t *testing.T) {
 	repository.On("FindByPhoneNumber", customer.PhoneNumber).Return(customer, nil).Once()
 
 	service := Customer{Repository: &repository}
-	err := service.Save(customer)
+	_, err := service.Save(customer)
 
 	repository.AssertExpectations(t)
 

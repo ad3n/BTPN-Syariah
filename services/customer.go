@@ -25,11 +25,11 @@ func (s Customer) Reservation(customer models.Customer, tableNumber int) (models
 	return order, s.Order.Saves(&order)
 }
 
-func (s Customer) Save(customer models.Customer) error {
+func (s Customer) Save(customer models.Customer) (models.Customer, error) {
 	exist, _ := s.Repository.FindByPhoneNumber(customer.PhoneNumber)
 	if exist.PhoneNumber == customer.PhoneNumber {
 		customer.ID = exist.ID
 	}
 
-	return s.Repository.Saves(&customer)
+	return customer, s.Repository.Saves(&customer)
 }

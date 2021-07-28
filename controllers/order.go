@@ -17,23 +17,23 @@ type Order struct {
 }
 
 func (c Order) Prepare(ctx *fiber.Ctx) error {
-	return c.statusHandler(ctx, "prepare")
+	return c.handleStatus(ctx, "prepare")
 }
 
 func (c Order) Cancel(ctx *fiber.Ctx) error {
-	return c.statusHandler(ctx, "cancel")
+	return c.handleStatus(ctx, "cancel")
 }
 
 func (c Order) Rollback(ctx *fiber.Ctx) error {
-	return c.statusHandler(ctx, "rollback")
+	return c.handleStatus(ctx, "rollback")
 }
 
 func (c Order) Served(ctx *fiber.Ctx) error {
-	return c.statusHandler(ctx, "served")
+	return c.handleStatus(ctx, "served")
 }
 
 func (c Order) Pay(ctx *fiber.Ctx) error {
-	return c.statusHandler(ctx, "pay")
+	return c.handleStatus(ctx, "pay")
 }
 
 func (c Order) Update(ctx *fiber.Ctx) error {
@@ -89,7 +89,7 @@ func (c Order) Update(ctx *fiber.Ctx) error {
 	return ctx.JSON(order)
 }
 
-func (c Order) statusHandler(ctx *fiber.Ctx, status string) error {
+func (c Order) handleStatus(ctx *fiber.Ctx, status string) error {
 	orderId, err := strconv.Atoi(ctx.Params("id"))
 	if err != nil {
 		ctx.JSON(map[string]string{

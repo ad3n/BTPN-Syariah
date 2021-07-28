@@ -7,9 +7,9 @@ import (
 
 	"github.com/ad3n/resto/models"
 	"github.com/ad3n/resto/services"
-	"github.com/ad3n/resto/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/iancoleman/strcase"
 )
 
 type Order struct {
@@ -32,7 +32,7 @@ func (c Order) Prepare(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	order, err = c.Service.Prepare(order)
@@ -63,7 +63,7 @@ func (c Order) Cancel(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	order, err = c.Service.Cancel(order)
@@ -94,7 +94,7 @@ func (c Order) Rollback(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	order, err = c.Service.Rollback(order)
@@ -125,7 +125,7 @@ func (c Order) Served(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	order, err = c.Service.Served(order)
@@ -156,7 +156,7 @@ func (c Order) Pay(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	order, err = c.Service.Pay(order)
@@ -187,7 +187,7 @@ func (c Order) Update(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	model := []*models.OrderDetail{}
@@ -200,8 +200,10 @@ func (c Order) Update(ctx *fiber.Ctx) error {
 	if err != nil {
 		messages := []string{}
 		for _, err := range err.(validator.ValidationErrors) {
-			messages = append(messages, fmt.Sprintf("%s is %s", utils.ToUnderScore(err.Field()), err.Tag()))
+			messages = append(messages, fmt.Sprintf("%s is %s", strcase.ToSnake(err.Field()), err.Tag()))
 		}
+
+		fmt.Println(messages)
 
 		ctx.JSON(map[string]interface{}{
 			"message": messages,

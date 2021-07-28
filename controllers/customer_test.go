@@ -17,11 +17,7 @@ import (
 )
 
 func Test_Customer_Register_Empty_Payload(t *testing.T) {
-	repository := mocks.CustomerRepository{}
-
-	service := services.Customer{Repository: &repository}
-
-	controller := Customer{Service: service}
+	controller := Customer{}
 
 	app := fiber.New()
 	app.Post("/customers", controller.Register)
@@ -117,11 +113,7 @@ func Test_Customer_Register_Valid_Payload(t *testing.T) {
 }
 
 func Test_Customer_Reservation_Id_Not_Number(t *testing.T) {
-	repository := mocks.CustomerRepository{}
-
-	service := services.Customer{Repository: &repository}
-
-	controller := Customer{Service: service}
+	controller := Customer{}
 
 	app := fiber.New()
 	app.Post("/customers/:id/reservation", controller.Reservation)
@@ -146,7 +138,7 @@ func Test_Customer_Reservation_Customer_Not_Found(t *testing.T) {
 	response, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/customers/123/reservation", nil))
 
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusBadRequest, response.StatusCode)
+	utils.AssertEqual(t, fiber.StatusNotFound, response.StatusCode)
 }
 
 func Test_Customer_Reservation_Empty_Payload(t *testing.T) {

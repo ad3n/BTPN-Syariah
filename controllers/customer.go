@@ -7,8 +7,8 @@ import (
 
 	"github.com/ad3n/resto/models"
 	"github.com/ad3n/resto/services"
-	"github.com/ad3n/resto/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/iancoleman/strcase"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -26,7 +26,7 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 	if err != nil {
 		messages := []string{}
 		for _, err := range err.(validator.ValidationErrors) {
-			messages = append(messages, fmt.Sprintf("%s is %s", utils.ToUnderScore(err.Field()), err.Tag()))
+			messages = append(messages, fmt.Sprintf("%s is %s", strcase.ToSnake(err.Field()), err.Tag()))
 		}
 
 		ctx.JSON(map[string]interface{}{
@@ -66,7 +66,7 @@ func (c Customer) Reservation(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(http.StatusBadRequest)
+		return ctx.SendStatus(http.StatusNotFound)
 	}
 
 	model := models.Order{}
@@ -77,7 +77,7 @@ func (c Customer) Reservation(ctx *fiber.Ctx) error {
 	if err != nil {
 		messages := []string{}
 		for _, err := range err.(validator.ValidationErrors) {
-			messages = append(messages, fmt.Sprintf("%s is %s", utils.ToUnderScore(err.Field()), err.Tag()))
+			messages = append(messages, fmt.Sprintf("%s is %s", strcase.ToSnake(err.Field()), err.Tag()))
 		}
 
 		ctx.JSON(map[string]interface{}{

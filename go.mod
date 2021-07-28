@@ -6,6 +6,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/validator/v10 v10.8.0
 	github.com/gofiber/fiber/v2 v2.14.0
+	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.6.1

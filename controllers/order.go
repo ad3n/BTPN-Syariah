@@ -41,12 +41,134 @@ func (c Order) Prepare(ctx *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 
-		return ctx.SendStatus(fiber.StatusInternalServerError)
+		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	ctx.JSON(order)
+	return ctx.JSON(order)
+}
 
-	return ctx.SendStatus(fiber.StatusCreated)
+func (c Order) Cancel(ctx *fiber.Ctx) error {
+	orderId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err := c.Service.Get(orderId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err = c.Service.Cancel(order)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	return ctx.JSON(order)
+}
+
+func (c Order) Rollback(ctx *fiber.Ctx) error {
+	orderId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err := c.Service.Get(orderId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err = c.Service.Rollback(order)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	return ctx.JSON(order)
+}
+
+func (c Order) Served(ctx *fiber.Ctx) error {
+	orderId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err := c.Service.Get(orderId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err = c.Service.Served(order)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	return ctx.JSON(order)
+}
+
+func (c Order) Pay(ctx *fiber.Ctx) error {
+	orderId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err := c.Service.Get(orderId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err = c.Service.Pay(order)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": err.Error(),
+		})
+
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	return ctx.JSON(order)
 }
 
 func (c Order) Update(ctx *fiber.Ctx) error {
@@ -97,7 +219,5 @@ func (c Order) Update(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	ctx.JSON(order)
-
-	return ctx.SendStatus(fiber.StatusCreated)
+	return ctx.JSON(order)
 }

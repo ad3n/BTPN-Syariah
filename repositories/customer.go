@@ -11,9 +11,9 @@ type Customer struct {
 	Storage *gorm.DB
 }
 
-func (r Customer) Find(Id int) (models.Customer, error) {
+func (r Customer) Find(id int) (models.Customer, error) {
 	customer := models.Customer{}
-	err := r.Storage.First(&customer, "id = ?", Id).Error
+	err := r.Storage.First(&customer, "id = ?", id).Error
 
 	if customer.ID == 0 {
 		return customer, errors.New("customer not found")
@@ -22,11 +22,15 @@ func (r Customer) Find(Id int) (models.Customer, error) {
 	return customer, err
 }
 
-func (r Customer) FindAll() ([]models.Customer, error) {
-	customers := []models.Customer{}
-	result := r.Storage.Find(&customers)
+func (r Customer) FindByPhoneNumber(phoneNumber string) (models.Customer, error) {
+	customer := models.Customer{}
+	err := r.Storage.First(&customer, "phone_number = ?", phoneNumber).Error
 
-	return customers, result.Error
+	if customer.ID == 0 {
+		return customer, errors.New("customer not found")
+	}
+
+	return customer, err
 }
 
 func (r Customer) Saves(customers ...*models.Customer) error {

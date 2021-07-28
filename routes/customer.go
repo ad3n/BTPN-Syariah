@@ -25,6 +25,5 @@ func (Customer) RegisterRoutes(router fiber.Router) {
 	customer := controllers.Customer{Service: customerService}
 
 	router.Post("/customers", customer.Register)
-	router.Get("/customers/:id/orders", customer.GetOrder)
 	router.Post("/customers/:id/reservation", customer.Reservation)
 }

@@ -16,13 +16,6 @@ func (r OrderDetail) FindByOrder(order models.Order) ([]models.OrderDetail, erro
 	return detail, err
 }
 
-func (r OrderDetail) FindAll() ([]models.OrderDetail, error) {
-	detail := []models.OrderDetail{}
-	result := r.Storage.Find(&detail)
-
-	return detail, result.Error
-}
-
 func (r OrderDetail) Saves(details ...*models.OrderDetail) error {
 	tx := r.Storage.Begin()
 	defer func() {

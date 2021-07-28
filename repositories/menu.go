@@ -11,9 +11,9 @@ type Menu struct {
 	Storage *gorm.DB
 }
 
-func (r Menu) Find(Id int) (models.Menu, error) {
+func (r Menu) Find(id int) (models.Menu, error) {
 	menu := models.Menu{}
-	err := r.Storage.First(&menu, "id = ?", Id).Error
+	err := r.Storage.First(&menu, "id = ?", id).Error
 
 	if menu.ID == 0 {
 		return menu, errors.New("menu not found")

@@ -7,7 +7,6 @@ import (
 
 	"github.com/ad3n/resto/models"
 	"github.com/ad3n/resto/services"
-	"github.com/ad3n/resto/types"
 	"github.com/ad3n/resto/utils"
 	"github.com/gofiber/fiber/v2"
 
@@ -49,37 +48,6 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 	ctx.JSON(model)
 
 	return ctx.SendStatus(fiber.StatusCreated)
-}
-
-func (c Customer) GetOrder(ctx *fiber.Ctx) error {
-	customerId, err := strconv.Atoi(ctx.Params("id"))
-	if err != nil {
-		ctx.JSON(map[string]string{
-			"message": "id is not number",
-		})
-
-		return ctx.SendStatus(http.StatusBadRequest)
-	}
-
-	customer, err := c.Service.Get(customerId)
-	if err != nil {
-		ctx.JSON(map[string]string{
-			"message": err.Error(),
-		})
-
-		return ctx.SendStatus(http.StatusBadRequest)
-	}
-
-	order, err := c.Service.GetOrder(customer, ctx.Query("status", types.ORDER_SERVED))
-	if err != nil {
-		ctx.JSON(map[string]string{
-			"message": err.Error(),
-		})
-
-		return ctx.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	return ctx.JSON(order)
 }
 
 func (c Customer) Reservation(ctx *fiber.Ctx) error {

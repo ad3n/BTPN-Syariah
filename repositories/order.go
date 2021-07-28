@@ -11,32 +11,15 @@ type Order struct {
 	Storage *gorm.DB
 }
 
-func (r Order) Find(Id int) (models.Order, error) {
+func (r Order) Find(id int) (models.Order, error) {
 	order := models.Order{}
-	err := r.Storage.First(&order, "id = ?", Id).Error
+	err := r.Storage.First(&order, "id = ?", id).Error
 
 	if order.ID == 0 {
 		return order, errors.New("order not found")
 	}
 
 	return order, err
-}
-
-func (r Order) FindByCustomer(customer models.Customer, status string) ([]models.Order, error) {
-	orders := []models.Order{}
-	err := r.Storage.
-		Where("customer_id = ?", customer.ID).
-		Where("status = ?", status).
-		Find(&orders).Error
-
-	return orders, err
-}
-
-func (r Order) FindAll() ([]models.Order, error) {
-	orders := []models.Order{}
-	result := r.Storage.Find(&orders)
-
-	return orders, result.Error
 }
 
 func (r Order) Saves(orders ...*models.Order) error {

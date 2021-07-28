@@ -12,29 +12,6 @@ type Customer struct {
 	OrderDetail repositories.OrderDetailRepository
 }
 
-func (s Customer) GetOrder(customer models.Customer, status string) ([]models.Order, error) {
-	orders, err := s.Order.FindByCustomer(customer, status)
-	if err != nil {
-		return orders, err
-	}
-
-	for k, o := range orders {
-		details, err := s.OrderDetail.FindByOrder(o)
-		if err == nil {
-			temp := []*models.OrderDetail{}
-			for _, d := range details {
-				temp = append(temp, &d)
-			}
-
-			o.Detail = temp
-
-			orders[k] = o
-		}
-	}
-
-	return orders, err
-}
-
 func (s Customer) Get(id int) (models.Customer, error) {
 	return s.Repository.Find(id)
 }
@@ -50,6 +27,11 @@ func (s Customer) Reservation(id int, tableNumber int) (models.Order, error) {
 }
 
 func (s Customer) Save(customer models.Customer) (models.Customer, error) {
+	exist, _ := s.Repository.FindByPhoneNumber(customer.PhoneNumber)
+	if exist.PhoneNumber == customer.PhoneNumber {
+		exist.Name = customer.Name
+	}
+
 	err := s.Repository.Saves(&customer)
 
 	return customer, err

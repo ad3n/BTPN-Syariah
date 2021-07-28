@@ -26,4 +26,8 @@ func (Order) RegisterRoutes(router fiber.Router) {
 
 	router.Put("/orders/:id", order.Update)
 	router.Put("/orders/:id/prepare", order.Prepare)
+	router.Put("/orders/:id/cancel", order.Cancel)
+	router.Put("/orders/:id/rollback", order.Rollback)
+	router.Put("/orders/:id/served", order.Served)
+	router.Put("/orders/:id/pay", order.Pay)
 }

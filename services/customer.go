@@ -20,6 +20,7 @@ func (s Customer) Reservation(customer models.Customer, tableNumber int) (models
 		CustomerID:  customer.ID,
 		TableNumber: tableNumber,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	return order, s.Order.Saves(&order)

@@ -10,6 +10,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+
+	_ "github.com/ad3n/resto/docs"
+	swagger "github.com/arsmn/fiber-swagger/v2"
 )
 
 func init() {
@@ -23,9 +26,21 @@ func init() {
 	)
 }
 
+// @title BTPN Syariah Test Code
+// @version 1.0
+// @description This Repository is only used for testing purpose
+// @termsOfService http://swagger.io/terms/
+// @contact.name Muhamad Surya Iksanudin
+// @contact.email surya.iksanudin@gmail.com
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+// @host localhost:3000
+// @BasePath /
 func main() {
 	app := fiber.New()
 	app.Use(logger.New())
+
+	app.Get("/docs/*", swagger.Handler)
 
 	(routes.Menu{}).RegisterRoutes(app)
 	(routes.Customer{}).RegisterRoutes(app)

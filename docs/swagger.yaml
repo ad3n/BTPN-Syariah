@@ -1,0 +1,119 @@
+basePath: /
+definitions:
+  models.Customer:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - name
+    - phone_number
+    type: object
+  models.Order:
+    properties:
+      amount:
+        type: number
+      customer_id:
+        type: integer
+      details:
+        items:
+          $ref: '#/definitions/models.OrderDetail'
+        type: array
+      id:
+        type: integer
+      status:
+        type: string
+      table_number:
+        type: integer
+    required:
+    - table_number
+    type: object
+  models.OrderDetail:
+    properties:
+      id:
+        type: integer
+      menu_id:
+        type: integer
+      order_id:
+        type: integer
+    required:
+    - menu_id
+    type: object
+  views.CustomerRegister:
+    properties:
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  views.CustomerReservation:
+    properties:
+      table_number:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: surya.iksanudin@gmail.com
+    name: Muhamad Surya Iksanudin
+  description: This Repository is only used for testing purpose
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: BTPN Syariah Test Code
+  version: "1.0"
+paths:
+  /customers:
+    post:
+      consumes:
+      - application/json
+      description: Register new customer
+      parameters:
+      - description: Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/views.CustomerRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+      summary: Register cew customer
+      tags:
+      - Customer
+  /customers/{id}/reservation:
+    post:
+      consumes:
+      - application/json
+      description: Customer reservation
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Customer
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/views.CustomerReservation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Customer Reservation
+      tags:
+      - Customer
+swagger: "2.0"

@@ -17,9 +17,18 @@ type Customer struct {
 	Service services.Customer
 }
 
+// @Description Register new customer
+// @Summary Register cew customer
+// @Tags Customer
+// @Accept json
+// @Produce json
+// @Param customer body views.CustomerRegister true "Customer"
+// @Success 200 {object} models.Customer
+// @Router /customers [post]
 func (c Customer) Register(ctx *fiber.Ctx) error {
 	model := models.Customer{}
 	ctx.BodyParser(&model)
+	model.ID = 0
 
 	validate := validator.New()
 	err := validate.Struct(model)
@@ -50,6 +59,15 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusCreated)
 }
 
+// @Description Customer reservation
+// @Summary Customer Reservation
+// @Tags Customer
+// @Accept json
+// @Produce json
+// @Param id path int true "Customer ID"
+// @Param reservation body views.CustomerReservation true "Customer"
+// @Success 200 {object} models.Order
+// @Router /customers/{id}/reservation [post]
 func (c Customer) Reservation(ctx *fiber.Ctx) error {
 	customerId, err := strconv.Atoi(ctx.Params("id"))
 	if err != nil {

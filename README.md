@@ -4,7 +4,7 @@
 
 - Buat Database `resto`
 
-- Copy `.env.example` jadi `.env` dan sesuaikan value-nya
+- Copy `.env.example` jadi `.env` dan sesuaikan value-nya **kecuali port aplikasi**, Anda dapat merubah port aplikasi hanya jika Anda benar-benar paham konsekuensinya
 
 - Jalakan `docker-compose build && docker-compose up`
 
@@ -13,3 +13,7 @@
 ## Testing
 
 - Jalankan `docker-compose exec app sh -c "go test -coverprofile /tmp/coverage ./... -v"`
+
+## Dokumentasi
+
+- Dokumentasi dapat diakses melalui `http://localhost:3000/docs/index.html`

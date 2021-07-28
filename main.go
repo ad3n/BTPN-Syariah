@@ -6,6 +6,7 @@ import (
 	"github.com/ad3n/resto/configs"
 	"github.com/ad3n/resto/models"
 	"github.com/ad3n/resto/routes"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,6 +40,7 @@ func init() {
 func main() {
 	app := fiber.New()
 	app.Use(logger.New())
+	app.Use(compress.New(compress.Config{Level: compress.LevelBestSpeed}))
 
 	app.Get("/docs/*", swagger.Handler)
 

@@ -16,7 +16,21 @@ type Order struct {
 }
 
 func (s Order) Get(id int) (models.Order, error) {
-	return s.Repository.Find(id)
+	order, err := s.Repository.Find(id)
+	if err != nil {
+		return order, err
+	}
+
+	details, err := s.Detail.FindByOrder(order)
+	if err != nil {
+		return order, err
+	}
+
+	for _, d := range details {
+		order.Detail = append(order.Detail, &d)
+	}
+
+	return order, err
 }
 
 func (s Order) Prepare(order models.Order) (models.Order, error) {

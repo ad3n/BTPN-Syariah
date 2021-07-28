@@ -12,6 +12,17 @@ definitions:
     - name
     - phone_number
     type: object
+  models.Menu:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      type:
+        type: string
+    type: object
   models.Order:
     properties:
       amount:
@@ -116,4 +127,148 @@ paths:
       summary: Customer Reservation
       tags:
       - Customer
+  /menus:
+    get:
+      consumes:
+      - application/json
+      description: Get all menu
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Menu'
+            type: array
+      summary: Get all menu
+      tags:
+      - Menu
+  /orders/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update order (assign/update menu to order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Update order
+      tags:
+      - Order
+  /orders/{id}/cancel:
+    put:
+      consumes:
+      - application/json
+      description: Cancel reservation (only for reservation - pending - order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Cancel reservation
+      tags:
+      - Order
+  /orders/{id}/pay:
+    put:
+      consumes:
+      - application/json
+      description: Order payment (only for served - served - order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Order payment
+      tags:
+      - Order
+  /orders/{id}/prepare:
+    put:
+      consumes:
+      - application/json
+      description: Send order to kitchen (only for reservation - pending - order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Send order to kitchen
+      tags:
+      - Order
+  /orders/{id}/rollback:
+    put:
+      consumes:
+      - application/json
+      description: Send back to waiter because can't be created (only for prapare
+        - prepare - order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Send back to waiter
+      tags:
+      - Order
+  /orders/{id}/served:
+    put:
+      consumes:
+      - application/json
+      description: Serving order (only for prapare - prepare - order)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Serving order
+      tags:
+      - Order
 swagger: "2.0"

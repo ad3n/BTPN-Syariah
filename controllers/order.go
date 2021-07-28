@@ -16,26 +16,74 @@ type Order struct {
 	Service services.Order
 }
 
+// @Description Send order to kitchen (only for reservation - pending - order)
+// @Summary Send order to kitchen
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id}/prepare [put]
 func (c Order) Prepare(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "prepare")
 }
 
+// @Description Cancel reservation (only for reservation - pending - order)
+// @Summary Cancel reservation
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id}/cancel [put]
 func (c Order) Cancel(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "cancel")
 }
 
+// @Description Send back to waiter because can't be created (only for prapare - prepare - order)
+// @Summary Send back to waiter
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id}/rollback [put]
 func (c Order) Rollback(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "rollback")
 }
 
+// @Description Serving order (only for prapare - prepare - order)
+// @Summary Serving order
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id}/served [put]
 func (c Order) Served(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "served")
 }
 
+// @Description Order payment - completed - (only for served - served - order)
+// @Summary Order payment
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id}/pay [put]
 func (c Order) Pay(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "pay")
 }
 
+// @Description Update order (assign/update menu to order)
+// @Summary Update order
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} models.Order
+// @Router /orders/{id} [put]
 func (c Order) Update(ctx *fiber.Ctx) error {
 	orderId, err := strconv.Atoi(ctx.Params("id"))
 	if err != nil {

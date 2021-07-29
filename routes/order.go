@@ -25,6 +25,7 @@ func (Order) RegisterRoutes(router fiber.Router) {
 	order := controllers.Order{Service: orderService}
 
 	router.Put("/orders/:id", order.Update)
+	router.Get("/orders/:id", order.Get)
 	router.Put("/orders/:id/prepare", order.Prepare)
 	router.Put("/orders/:id/cancel", order.Cancel)
 	router.Put("/orders/:id/rollback", order.Rollback)

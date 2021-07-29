@@ -53,6 +53,7 @@ func Test_Customer_Reservation(t *testing.T) {
 		CustomerID:  customer.ID,
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}

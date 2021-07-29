@@ -16,6 +16,52 @@ import (
 	"github.com/gofiber/fiber/v2/utils"
 )
 
+func Test_Customer_Get_Not_Number(t *testing.T) {
+	controller := Customer{}
+
+	app := fiber.New()
+	app.Get("/customers/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/customers/abc", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusBadRequest, response.StatusCode)
+}
+
+func Test_Customer_Get_Customer_Not_Found(t *testing.T) {
+	repository := mocks.CustomerRepository{}
+	repository.On("Find", 123).Return(models.Customer{}, errors.New("triggered")).Once()
+
+	service := services.Customer{Repository: &repository}
+
+	controller := Customer{Service: service}
+
+	app := fiber.New()
+	app.Get("/customers/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/customers/123", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusNotFound, response.StatusCode)
+}
+
+func Test_Customer_Get_Success(t *testing.T) {
+	repository := mocks.CustomerRepository{}
+	repository.On("Find", 123).Return(models.Customer{}, nil).Once()
+
+	service := services.Customer{Repository: &repository}
+
+	controller := Customer{Service: service}
+
+	app := fiber.New()
+	app.Get("/customers/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/customers/123", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusOK, response.StatusCode)
+}
+
 func Test_Customer_Register_Empty_Payload(t *testing.T) {
 	controller := Customer{}
 
@@ -206,6 +252,7 @@ func Test_Customer_Reservation_Valid_Payload_With_Error(t *testing.T) {
 		TableNumber: 123,
 		CustomerID:  customer.ID,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.CustomerRepository{}
@@ -247,6 +294,7 @@ func Test_Customer_Reservation_Valid_Payload(t *testing.T) {
 		TableNumber: 123,
 		CustomerID:  customer.ID,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.CustomerRepository{}

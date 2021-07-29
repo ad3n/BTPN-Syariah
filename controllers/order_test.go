@@ -16,6 +16,64 @@ import (
 	"github.com/gofiber/fiber/v2/utils"
 )
 
+func Test_Order_Get_Not_Number(t *testing.T) {
+	controller := Order{}
+
+	app := fiber.New()
+	app.Get("/orders/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/orders/abc", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusBadRequest, response.StatusCode)
+}
+
+func Test_Order_Get_Order_Not_Found(t *testing.T) {
+	repository := mocks.OrderRepository{}
+	repository.On("Find", 123).Return(models.Order{}, errors.New("triggered")).Once()
+
+	service := services.Order{Repository: &repository}
+
+	controller := Order{Service: service}
+
+	app := fiber.New()
+	app.Get("/orders/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/orders/123", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusNotFound, response.StatusCode)
+}
+
+func Test_Order_Get_Success(t *testing.T) {
+	data := models.Order{
+		ID:     123,
+		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
+	}
+
+	repository := mocks.OrderRepository{}
+	repository.On("Find", data.ID).Return(data, nil).Once()
+
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
+
+	controller := Order{Service: service}
+
+	app := fiber.New()
+	app.Get("/orders/:id", controller.Get)
+
+	response, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/orders/123", nil))
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusOK, response.StatusCode)
+}
+
 func Test_Order_Prepare_Id_Not_Number(t *testing.T) {
 	controller := Order{}
 
@@ -49,12 +107,19 @@ func Test_Order_Prepare_Invalid_Status(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -71,18 +136,26 @@ func Test_Order_Prepare_Success(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_PENDING,
+		Detail: []*models.OrderDetail{},
 	}
 
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_PREPARE,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 	repository.On("Saves", &param).Return(nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -140,12 +213,19 @@ func Test_Order_Cancel_Invalid_Status(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -162,18 +242,26 @@ func Test_Order_Cancel_Success(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_PENDING,
+		Detail: []*models.OrderDetail{},
 	}
 
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 	repository.On("Saves", &param).Return(nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -231,12 +319,19 @@ func Test_Order_Rollback_Invalid_Status(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -253,18 +348,26 @@ func Test_Order_Rollback_Success(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_PREPARE,
+		Detail: []*models.OrderDetail{},
 	}
 
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_PENDING,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 	repository.On("Saves", &param).Return(nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -322,12 +425,19 @@ func Test_Order_Served_Invalid_Status(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -344,18 +454,26 @@ func Test_Order_Served_Success(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_PREPARE,
+		Detail: []*models.OrderDetail{},
 	}
 
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_SERVED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 	repository.On("Saves", &param).Return(nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -413,12 +531,19 @@ func Test_Order_Pay_Invalid_Status(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -435,18 +560,26 @@ func Test_Order_Pay_Success(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_SERVED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_PAID,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 	repository.On("Saves", &param).Return(nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -504,12 +637,19 @@ func Test_Order_Update_Order_Invalid_Payload(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_CANCELLED,
+		Detail: []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -535,12 +675,19 @@ func Test_Order_Update_Order_Valid_Payload_With_Invalid_Status(t *testing.T) {
 		ID:          123,
 		TableNumber: 1,
 		Status:      types.ORDER_CANCELLED,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()
 
-	service := services.Order{Repository: &repository}
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
 
 	controller := Order{Service: service}
 
@@ -567,6 +714,7 @@ func Test_Order_Update_Order_Valid_Payload_With_Menu_Not_Found(t *testing.T) {
 		ID:          123,
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -575,9 +723,13 @@ func Test_Order_Update_Order_Valid_Payload_With_Menu_Not_Found(t *testing.T) {
 	menuRepository := mocks.MenuRepository{}
 	menuRepository.On("Find", 1).Return(models.Menu{}, errors.New(""))
 
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
 	service := services.Order{
 		Repository: &repository,
 		Menu:       &menuRepository,
+		Detail:     &detailRepository,
 	}
 
 	controller := Order{Service: service}
@@ -605,6 +757,7 @@ func Test_Order_Update_Order_Valid_Payload_With_Save_Fail(t *testing.T) {
 		ID:          123,
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	detail := &models.OrderDetail{
@@ -620,6 +773,7 @@ func Test_Order_Update_Order_Valid_Payload_With_Save_Fail(t *testing.T) {
 
 	detailRepository := mocks.OrderDetailRepository{}
 	detailRepository.On("Saves", detail).Return(errors.New("triggered"))
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
 
 	service := services.Order{
 		Repository: &repository,
@@ -652,6 +806,7 @@ func Test_Order_Update_Order_Valid_Payload(t *testing.T) {
 		ID:          123,
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	detail := &models.OrderDetail{
@@ -667,6 +822,7 @@ func Test_Order_Update_Order_Valid_Payload(t *testing.T) {
 
 	detailRepository := mocks.OrderDetailRepository{}
 	detailRepository.On("Saves", detail).Return(nil)
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
 
 	service := services.Order{
 		Repository: &repository,

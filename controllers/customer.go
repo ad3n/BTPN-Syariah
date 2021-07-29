@@ -17,12 +17,42 @@ type Customer struct {
 	Service services.Customer
 }
 
+// @Description Get customer by ID
+// @Summary Get customer by ID
+// @Tags Customer
+// @Accept json
+// @Produce json
+// @Param id path int true "Customer ID"
+// @Success 200 {object} []models.Customer
+// @Router /customers/{id} [get]
+func (c Customer) Get(ctx *fiber.Ctx) error {
+	cutomerId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	customer, err := c.Service.Get(cutomerId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "customer not found",
+		})
+
+		return ctx.SendStatus(fiber.StatusNotFound)
+	}
+
+	return ctx.JSON(customer)
+}
+
 // @Description Register new customer
 // @Summary Register cew customer
 // @Tags Customer
 // @Accept json
 // @Produce json
-// @Param customer body views.CustomerRegister true "Customer"
+// @Param customer body forms.CustomerRegister true "Customer"
 // @Success 200 {object} models.Customer
 // @Router /customers [post]
 func (c Customer) Register(ctx *fiber.Ctx) error {
@@ -65,7 +95,7 @@ func (c Customer) Register(ctx *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "Customer ID"
-// @Param reservation body views.CustomerReservation true "Customer"
+// @Param reservation body forms.CustomerReservation true "Customer"
 // @Success 200 {object} models.Order
 // @Router /customers/{id}/reservation [post]
 func (c Customer) Reservation(ctx *fiber.Ctx) error {

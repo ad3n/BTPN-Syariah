@@ -66,7 +66,7 @@ func Test_Menu_Save(t *testing.T) {
 	repository.On("Saves", &menu).Return(nil).Once()
 
 	service := Menu{Repository: &repository}
-	err := service.Save(menu)
+	_, err := service.Save(menu)
 
 	repository.AssertExpectations(t)
 

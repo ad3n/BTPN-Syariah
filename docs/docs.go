@@ -52,7 +52,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/views.CustomerRegister"
+                            "$ref": "#/definitions/forms.CustomerRegister"
                         }
                     }
                 ],
@@ -61,6 +61,41 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/{id}": {
+            "get": {
+                "description": "Get customer by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "Get customer by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Customer"
+                            }
                         }
                     }
                 }
@@ -93,7 +128,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/views.CustomerReservation"
+                            "$ref": "#/definitions/forms.CustomerReservation"
                         }
                     }
                 ],
@@ -131,9 +166,109 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create new menu (type: drink, main_course, starter, side_dish, snack)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create new menu",
+                "parameters": [
+                    {
+                        "description": "Menu",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.MenuCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Menu"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/{id}": {
+            "get": {
+                "description": "Get menu by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get menu by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Menu"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/orders/{id}": {
+            "get": {
+                "description": "Get order by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get order by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update order (assign/update menu to order)",
                 "consumes": [
@@ -199,7 +334,7 @@ var doc = `{
         },
         "/orders/{id}/pay": {
             "put": {
-                "description": "Order payment (only for served - served - order)",
+                "description": "Order payment - completed - (only for served - served - order)",
                 "consumes": [
                     "application/json"
                 ],
@@ -327,6 +462,39 @@ var doc = `{
         }
     },
     "definitions": {
+        "forms.CustomerRegister": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "forms.CustomerReservation": {
+            "type": "object",
+            "properties": {
+                "table_number": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.MenuCreate": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Customer": {
             "type": "object",
             "required": [
@@ -347,6 +515,10 @@ var doc = `{
         },
         "models.Menu": {
             "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
             "properties": {
                 "id": {
                     "type": "integer"
@@ -404,25 +576,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "order_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "views.CustomerRegister": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "phone_number": {
-                    "type": "string"
-                }
-            }
-        },
-        "views.CustomerReservation": {
-            "type": "object",
-            "properties": {
-                "table_number": {
                     "type": "integer"
                 }
             }

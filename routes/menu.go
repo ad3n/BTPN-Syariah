@@ -18,4 +18,5 @@ func (Menu) RegisterRoutes(router fiber.Router) {
 	menu := controllers.Menu{Service: menuService}
 
 	router.Get("/menus", menu.GetAll)
+	router.Get("/menus/:id", menu.Get)
 }

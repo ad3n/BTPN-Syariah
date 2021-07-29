@@ -1,4 +1,4 @@
-package views
+package forms
 
 type (
 	CustomerRegister struct {

@@ -22,6 +22,34 @@ func Test_Order_Not_Found(t *testing.T) {
 	assert.Equal(t, err.Error(), "order not found")
 }
 
+func Test_Order_Found_Error_Detail(t *testing.T) {
+	order := models.Order{
+		ID:          1,
+		CustomerID:  1,
+		TableNumber: 1,
+		Status:      types.ORDER_PENDING,
+		Amount:      0,
+		Detail:      []*models.OrderDetail{},
+	}
+
+	repository := mocks.OrderRepository{}
+	repository.On("Find", order.ID).Return(order, nil).Once()
+
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", order).Return([]models.OrderDetail{}, errors.New("triggered"))
+
+	service := Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
+
+	_, err := service.Get(order.ID)
+
+	repository.AssertExpectations(t)
+
+	assert.Equal(t, err.Error(), "triggered")
+}
+
 func Test_Order_Found(t *testing.T) {
 	order := models.Order{
 		ID:          1,
@@ -29,12 +57,23 @@ func Test_Order_Found(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", order.ID).Return(order, nil).Once()
 
-	service := Order{Repository: &repository}
+	details := []models.OrderDetail{}
+	details = append(details, models.OrderDetail{})
+
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", order).Return(details, nil)
+
+	service := Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
+
 	result, err := service.Get(order.ID)
 
 	repository.AssertExpectations(t)
@@ -51,6 +90,7 @@ func Test_Order_Prepare_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -66,6 +106,7 @@ func Test_Order_Prepare_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	param := models.Order{
@@ -74,6 +115,7 @@ func Test_Order_Prepare_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -95,6 +137,7 @@ func Test_Order_Served_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -110,6 +153,7 @@ func Test_Order_Served_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	param := models.Order{
@@ -118,6 +162,7 @@ func Test_Order_Served_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_SERVED,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -139,6 +184,7 @@ func Test_Order_Pay_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -154,6 +200,7 @@ func Test_Order_Pay_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_SERVED,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	param := models.Order{
@@ -162,6 +209,7 @@ func Test_Order_Pay_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PAID,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -183,6 +231,7 @@ func Test_Order_Rollback_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -198,6 +247,7 @@ func Test_Order_Rollback_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	param := models.Order{
@@ -206,6 +256,7 @@ func Test_Order_Rollback_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -227,6 +278,7 @@ func Test_Order_Cancel_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_SERVED,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -242,6 +294,7 @@ func Test_Order_Cancel_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	param := models.Order{
@@ -250,6 +303,7 @@ func Test_Order_Cancel_Valid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_CANCELLED,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	repository := mocks.OrderRepository{}
@@ -271,6 +325,7 @@ func Test_Order_Update_Invalid_Status(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	service := Order{}
@@ -286,6 +341,7 @@ func Test_Order_Update_Menu_Not_Found(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	order.Detail = append(order.Detail, &models.OrderDetail{OrderID: 1, MenuID: 1})
@@ -308,6 +364,7 @@ func Test_Order_Update_Valid(t *testing.T) {
 		TableNumber: 1,
 		Status:      types.ORDER_PENDING,
 		Amount:      0,
+		Detail:      []*models.OrderDetail{},
 	}
 
 	detail := models.OrderDetail{OrderID: 1, MenuID: 1}

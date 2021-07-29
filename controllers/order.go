@@ -76,6 +76,36 @@ func (c Order) Pay(ctx *fiber.Ctx) error {
 	return c.handleStatus(ctx, "pay")
 }
 
+// @Description Get order by ID
+// @Summary Get order by ID
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} []models.Order
+// @Router /orders/{id} [get]
+func (c Order) Get(ctx *fiber.Ctx) error {
+	orderId, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "id is not number",
+		})
+
+		return ctx.SendStatus(http.StatusBadRequest)
+	}
+
+	order, err := c.Service.Get(orderId)
+	if err != nil {
+		ctx.JSON(map[string]string{
+			"message": "order not found",
+		})
+
+		return ctx.SendStatus(fiber.StatusNotFound)
+	}
+
+	return ctx.JSON(order)
+}
+
 // @Description Update order (assign/update menu to order)
 // @Summary Update order
 // @Tags Order

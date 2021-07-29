@@ -38,6 +38,10 @@ func (s Order) Prepare(order models.Order) (models.Order, error) {
 		return order, errors.New("can not preparing unreserved order")
 	}
 
+	if len(order.Detail) == 0 {
+		return order, errors.New("can not preparing empty order")
+	}
+
 	order.Status = types.ORDER_PREPARE
 
 	return order, s.Repository.Saves(&order)

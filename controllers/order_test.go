@@ -132,18 +132,56 @@ func Test_Order_Prepare_Invalid_Status(t *testing.T) {
 	utils.AssertEqual(t, fiber.StatusBadRequest, response.StatusCode)
 }
 
-func Test_Order_Prepare_Success(t *testing.T) {
+func Test_Order_Prepare_Empty_Order(t *testing.T) {
 	data := models.Order{
 		ID:     123,
 		Status: types.ORDER_PENDING,
 		Detail: []*models.OrderDetail{},
 	}
 
+	repository := mocks.OrderRepository{}
+	repository.On("Find", data.ID).Return(data, nil).Once()
+
+	detailRepository := mocks.OrderDetailRepository{}
+	detailRepository.On("FindByOrder", data).Return([]models.OrderDetail{}, nil)
+
+	service := services.Order{
+		Repository: &repository,
+		Detail:     &detailRepository,
+	}
+
+	controller := Order{Service: service}
+
+	app := fiber.New()
+	app.Put("/orders/:id/prepare", controller.Prepare)
+
+	request := httptest.NewRequest(fiber.MethodPut, "/orders/123/prepare", nil)
+	request.Header.Add("content-type", "application/json")
+	response, err := app.Test(request)
+
+	utils.AssertEqual(t, nil, err)
+	utils.AssertEqual(t, fiber.StatusBadRequest, response.StatusCode)
+}
+
+func Test_Order_Prepare_Success(t *testing.T) {
+	data := models.Order{
+		ID:     123,
+		Status: types.ORDER_PENDING,
+	}
+
 	param := models.Order{
 		ID:     data.ID,
 		Status: types.ORDER_PREPARE,
-		Detail: []*models.OrderDetail{},
 	}
+
+	details := []*models.OrderDetail{}
+	details = append(details, &models.OrderDetail{
+		OrderID: data.ID,
+		MenuID:  1,
+	})
+
+	data.Detail = details
+	param.Detail = details
 
 	repository := mocks.OrderRepository{}
 	repository.On("Find", data.ID).Return(data, nil).Once()

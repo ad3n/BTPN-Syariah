@@ -99,7 +99,7 @@ func Test_Order_Prepare_Invalid_Status(t *testing.T) {
 	assert.Equal(t, err.Error(), "can not preparing unreserved order")
 }
 
-func Test_Order_Prepare_Valid_Status(t *testing.T) {
+func Test_Order_Prepare_Empty_Order(t *testing.T) {
 	order := models.Order{
 		ID:          1,
 		CustomerID:  1,
@@ -109,14 +109,37 @@ func Test_Order_Prepare_Valid_Status(t *testing.T) {
 		Detail:      []*models.OrderDetail{},
 	}
 
-	param := models.Order{
+	service := Order{}
+	_, err := service.Prepare(order)
+
+	assert.Equal(t, err.Error(), "can not preparing empty order")
+}
+
+func Test_Order_Prepare_Valid_Status(t *testing.T) {
+	order := models.Order{
 		ID:          1,
+		CustomerID:  1,
+		TableNumber: 1,
+		Status:      types.ORDER_PENDING,
+		Amount:      0,
+	}
+
+	param := models.Order{
+		ID:          order.ID,
 		CustomerID:  1,
 		TableNumber: 1,
 		Status:      types.ORDER_PREPARE,
 		Amount:      0,
-		Detail:      []*models.OrderDetail{},
 	}
+
+	details := []*models.OrderDetail{}
+	details = append(details, &models.OrderDetail{
+		OrderID: order.ID,
+		MenuID:  1,
+	})
+
+	order.Detail = details
+	param.Detail = details
 
 	repository := mocks.OrderRepository{}
 	repository.On("Saves", &param).Return(nil).Once()

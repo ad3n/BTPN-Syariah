@@ -8,7 +8,7 @@
 
 - Jalakan `docker-compose build && docker-compose up`
 
-- Jalankan `docker-compose exec app sh -c "go run seeds/seeder.go"`
+- Jalankan `docker-compose exec app sh -c "go run seeds/seeder.go"` untuk menambahkan menu awal
 
 ## Testing
 

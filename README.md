@@ -16,4 +16,4 @@
 
 ## Dokumentasi
 
-- Dokumentasi dapat diakses melalui `http://localhost:3000/docs/index.html`
+- Dokumentasi (swagger) dapat diakses melalui `http://localhost:3000/docs/index.html`

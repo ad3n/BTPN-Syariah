@@ -6,13 +6,13 @@
 
 - Copy `.env.example` jadi `.env` dan sesuaikan value-nya **kecuali port aplikasi**, Anda dapat merubah port aplikasi hanya jika Anda benar-benar paham konsekuensinya
 
-- Jalakan `docker-compose build && docker-compose up`
+- Jalankan `go run seeds/seeder.go` untuk menambahkan menu awal
 
-- Jalankan `docker-compose exec app sh -c "go run seeds/seeder.go"` untuk menambahkan menu awal
+- Jalakan `docker-compose build && docker-compose up`
 
 ## Testing
 
-- Jalankan `docker-compose exec app sh -c "go test -coverprofile /tmp/coverage ./... -v"`
+- Jalankan `go test -coverprofile /tmp/coverage ./... -v`
 
 ## Dokumentasi
 

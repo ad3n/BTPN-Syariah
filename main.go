@@ -8,12 +8,12 @@ import (
 	"github.com/ad3n/resto/routes"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 
 	_ "github.com/ad3n/resto/docs"
-	swagger "github.com/arsmn/fiber-swagger/v2"
 )
 
 func init() {
@@ -42,7 +42,7 @@ func main() {
 	app.Use(logger.New())
 	app.Use(compress.New(compress.Config{Level: compress.LevelBestSpeed}))
 
-	app.Get("/docs/*", swagger.Handler)
+	app.Get("/docs/*", swagger.HandlerDefault)
 
 	(routes.Menu{}).RegisterRoutes(app)
 	(routes.Customer{}).RegisterRoutes(app)
